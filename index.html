@@ -257,13 +257,9 @@
 
     const SUPABASE_URL = 'https://hhyhulqngdkwsxhymmcd.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_haKvwV0M7KMj4Qz69M6WGg_KmIfU-aI';
-    // No storageKey override — use Supabase default so all AMD properties share the session.
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Resolve ?return= destination
-    const params    = new URLSearchParams(window.location.search);
-    const returnUrl = params.get('return') || 'https://andremauricedavis.com';
-    const ALLOWED   = [
+    const ALLOWED = [
       'https://andremauricedavis.com',
       'https://andredavisme.github.io',
       'https://personal-ledger-public-display.pages.dev',
@@ -276,25 +272,45 @@
         return ALLOWED.some(o => url.startsWith(o)) || u.hostname.endsWith('.andremauricedavis.com');
       } catch { return false; }
     }
-    const safeReturn = isSafe(returnUrl) ? returnUrl : 'https://andremauricedavis.com';
 
-    // If already signed in, skip login
+    // Resolve safeReturn:
+    // 1. Check ?return= on current URL (first page load, before OAuth)
+    // 2. Fall back to sessionStorage (restored after OAuth callback wipes query string)
+    // 3. Default to production home
+    const params    = new URLSearchParams(window.location.search);
+    const returnUrl = params.get('return');
+    let safeReturn;
+
+    if (returnUrl && isSafe(returnUrl)) {
+      safeReturn = returnUrl;
+      sessionStorage.setItem('amd_return', safeReturn); // persist before OAuth redirect
+    } else {
+      const stored = sessionStorage.getItem('amd_return');
+      safeReturn = (stored && isSafe(stored)) ? stored : 'https://andremauricedavis.com';
+    }
+
+    // If already signed in, redirect immediately
     const { data: { session } } = await supabase.auth.getSession();
-    if (session) window.location.replace(safeReturn);
+    if (session) {
+      sessionStorage.removeItem('amd_return');
+      window.location.replace(safeReturn);
+    }
 
-    // Handle OAuth callback + email success
+    // Handle OAuth callback and email sign-in success
     supabase.auth.onAuthStateChange((event, session) => {
       if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session) {
+        sessionStorage.removeItem('amd_return');
         window.location.replace(safeReturn);
       }
     });
 
-    // Google OAuth
+    // Google OAuth — redirectTo is the portal itself (Supabase strips query strings anyway)
+    // safeReturn is preserved via sessionStorage instead
     document.getElementById('btn-google').addEventListener('click', async () => {
       await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: 'https://auth.andremauricedavis.com/?return=' + encodeURIComponent(safeReturn),
+          redirectTo: 'https://auth.andremauricedavis.com/',
         },
       });
     });
@@ -322,7 +338,6 @@
         btnEmail.disabled    = false;
         btnEmail.textContent = 'Sign in';
       }
-      // On success onAuthStateChange fires and redirects.
     });
 
     // Dark mode
