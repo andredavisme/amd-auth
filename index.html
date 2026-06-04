@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — AMD Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --color-primary:        #c97b12;
+      --color-orange:         #d95e1a;
+      --color-bg:             #f8f5f0;
+      --color-surface:        #faf7f3;
+      --color-surface-raised: #ffffff;
+      --color-border:         #e8e0d4;
+      --color-text:           #1f1a13;
+      --color-text-muted:     #6b5f4e;
+      --color-error:          #dc2626;
+      --font-display:         'Instrument Serif', Georgia, serif;
+      --font-body:            'Work Sans', 'Helvetica Neue', sans-serif;
+      --radius-card:          14px;
+      --shadow-card:          0 4px 24px rgba(31,26,19,0.10);
+    }
+    [data-theme="dark"] {
+      --color-bg:             #16130e;
+      --color-surface:        #1e1a13;
+      --color-surface-raised: #26211a;
+      --color-border:         #3a3228;
+      --color-text:           #f0ebe3;
+      --color-text-muted:     #a89880;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      min-height: 100vh;
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.5;
+      transition: background 0.2s, color 0.2s;
+    }
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 2rem;
+      text-decoration: none;
+    }
+    .logo-mark {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      background: var(--color-primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo-mark span {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      color: #fff;
+      line-height: 1;
+    }
+    .logo-mark::after {
+      content: '';
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 7px;
+      height: 7px;
+      background: var(--color-orange);
+      border-radius: 50%;
+    }
+    .logo-wordmark {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      color: var(--color-text);
+    }
+    .card {
+      background: var(--color-surface-raised);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-card);
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 400px;
+    }
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      color: var(--color-text);
+      margin-bottom: 0.35rem;
+    }
+    .card-subtitle {
+      font-size: 0.875rem;
+      color: var(--color-text-muted);
+      margin-bottom: 2rem;
+    }
+    .btn-google {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      padding: 0.7rem 1rem;
+      background: var(--color-surface-raised);
+      border: 1.5px solid var(--color-border);
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-text);
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      margin-bottom: 1.5rem;
+    }
+    .btn-google:hover {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(201,123,18,0.12);
+    }
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      color: var(--color-text-muted);
+      font-size: 0.8rem;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--color-border);
+    }
+    .field { margin-bottom: 1rem; }
+    .field label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-text-muted);
+      margin-bottom: 0.4rem;
+    }
+    .field input {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      background: var(--color-surface);
+      border: 1.5px solid var(--color-border);
+      border-radius: 7px;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      color: var(--color-text);
+      transition: border-color 0.15s, box-shadow 0.15s;
+      outline: none;
+    }
+    .field input:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(201,123,18,0.12);
+    }
+    .btn-primary {
+      width: 100%;
+      padding: 0.72rem 1rem;
+      background: var(--color-primary);
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: opacity 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .msg {
+      font-size: 0.85rem;
+      border-radius: 7px;
+      padding: 0.6rem 0.8rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    .msg.error   { background: #fef2f2; color: var(--color-error); border: 1px solid #fecaca; display: block; }
+    .msg.success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; display: block; }
+    .theme-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: var(--color-surface-raised);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 0.4rem 0.6rem;
+      font-size: 1rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="theme-toggle" id="theme-toggle" title="Toggle dark mode">🌙</button>
+
+  <div class="page">
+
+    <a href="https://andremauricedavis.com" class="logo">
+      <div class="logo-mark"><span>A</span></div>
+      <span class="logo-wordmark">andremauricedavis.com</span>
+    </a>
+
+    <div class="card">
+      <h1 class="card-title">Sign in</h1>
+      <p class="card-subtitle">Access all AMD platform properties with one account.</p>
+
+      <button class="btn-google" id="btn-google">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/>
+          <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
+          <path d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z" fill="#FBBC05"/>
+          <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 6.293C4.672 4.166 6.656 3.58 9 3.58z" fill="#EA4335"/>
+        </svg>
+        Continue with Google
+      </button>
+
+      <div class="divider">or sign in with email</div>
+
+      <div id="msg" class="msg"></div>
+
+      <form id="email-form" novalidate>
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" autocomplete="email" placeholder="you@example.com" />
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" autocomplete="current-password" placeholder="••••••••" />
+        </div>
+        <button type="submit" class="btn-primary" id="btn-email">Sign in</button>
+      </form>
+    </div>
+
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+    const SUPABASE_URL = 'https://hhyhulqngdkwsxhymmcd.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_haKvwV0M7KMj4Qz69M6WGg_KmIfU-aI';
+    // No storageKey override — use Supabase default so all AMD properties share the session.
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Resolve ?return= destination
+    const params    = new URLSearchParams(window.location.search);
+    const returnUrl = params.get('return') || 'https://andremauricedavis.com';
+    const ALLOWED   = [
+      'https://andremauricedavis.com',
+      'https://andredavisme.github.io',
+      'https://personal-ledger-public-display.pages.dev',
+      'http://localhost',
+      'http://127.0.0.1',
+    ];
+    function isSafe(url) {
+      try {
+        const u = new URL(url);
+        return ALLOWED.some(o => url.startsWith(o)) || u.hostname.endsWith('.andremauricedavis.com');
+      } catch { return false; }
+    }
+    const safeReturn = isSafe(returnUrl) ? returnUrl : 'https://andremauricedavis.com';
+
+    // If already signed in, skip login
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) window.location.replace(safeReturn);
+
+    // Handle OAuth callback + email success
+    supabase.auth.onAuthStateChange((event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session) {
+        window.location.replace(safeReturn);
+      }
+    });
+
+    // Google OAuth
+    document.getElementById('btn-google').addEventListener('click', async () => {
+      await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: 'https://auth.andremauricedavis.com/?return=' + encodeURIComponent(safeReturn),
+        },
+      });
+    });
+
+    // Email + Password
+    const msgEl    = document.getElementById('msg');
+    const btnEmail = document.getElementById('btn-email');
+
+    function showMsg(text, type) {
+      msgEl.textContent = text;
+      msgEl.className   = 'msg ' + type;
+    }
+
+    document.getElementById('email-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email    = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      if (!email || !password) { showMsg('Email and password are required.', 'error'); return; }
+      btnEmail.disabled    = true;
+      btnEmail.textContent = 'Signing in…';
+      msgEl.className      = 'msg';
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        showMsg(error.message || 'Sign in failed.', 'error');
+        btnEmail.disabled    = false;
+        btnEmail.textContent = 'Sign in';
+      }
+      // On success onAuthStateChange fires and redirects.
+    });
+
+    // Dark mode
+    const html     = document.documentElement;
+    const themeBtn = document.getElementById('theme-toggle');
+    const saved    = localStorage.getItem('amd-theme');
+    if (saved) html.setAttribute('data-theme', saved);
+    themeBtn.addEventListener('click', () => {
+      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('amd-theme', next);
+      themeBtn.textContent = next === 'dark' ? '☀️' : '🌙';
+    });
+    if (html.getAttribute('data-theme') === 'dark') themeBtn.textContent = '☀️';
+  </script>
+
+</body>
+</html>
